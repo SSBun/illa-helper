@@ -9,7 +9,6 @@ import { mergeCustomParams } from '../utils/apiUtils';
 import { addPositionsToReplacements } from '../utils/textUtils';
 import { sendApiRequest } from '../utils/requestUtils';
 import {
-  getSystemPrompt,
   getSystemPromptByConfig,
 } from '../../core/translation/PromptService';
 import { getApiTimeout } from '@/src/utils';
@@ -28,6 +27,7 @@ export class OpenAIProvider extends BaseProvider {
     text: string,
     settings: UserSettings,
   ): Promise<FullTextAnalysisResponse> {
+    console.log('settings.customUserLevels', settings.customUserLevels);
     const useIntelligentMode =
       settings.multilingualConfig?.intelligentMode ||
       settings.translationDirection === 'intelligent';
@@ -39,12 +39,18 @@ export class OpenAIProvider extends BaseProvider {
           userLevel: settings.userLevel,
           replacementRate: settings.replacementRate,
           intelligentMode: true,
+          customUserLevels: settings.customUserLevels, // 传递自定义等级列表
+          customLevelAdjustment: settings.customLevelAdjustment, // 传递自定义等级调整模板
         })
-      : getSystemPrompt(
-          settings.translationDirection,
-          settings.userLevel,
-          settings.replacementRate,
-        );
+      : getSystemPromptByConfig({
+          translationDirection: settings.translationDirection,
+          targetLanguage: settings.translationDirection.includes('en') ? 'en' : 'zh',
+          userLevel: settings.userLevel,
+          replacementRate: settings.replacementRate,
+          intelligentMode: false,
+          customUserLevels: settings.customUserLevels, // 传递自定义等级列表
+          customLevelAdjustment: settings.customLevelAdjustment, // 传递自定义等级调整模板
+        });
 
     let requestBody: any = {
       model: this.config.model,

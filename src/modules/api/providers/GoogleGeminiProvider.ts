@@ -67,6 +67,8 @@ export class GoogleGeminiProvider extends BaseProvider {
       replacementRate: settings.replacementRate,
       intelligentMode: true,
       provider: 'gemini', // 指定为gemini获取特定prompt
+      customUserLevels: settings.customUserLevels, // 传递自定义等级列表
+      customLevelAdjustment: settings.customLevelAdjustment, // 传递自定义等级调整模板
     });
 
     const prompt = `${systemPrompt}\n\n${text}`;

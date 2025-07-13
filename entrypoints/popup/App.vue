@@ -17,8 +17,10 @@ import {
   DEFAULT_MULTILINGUAL_CONFIG,
   DEFAULT_PRONUNCIATION_HOTKEY,
   DEFAULT_FLOATING_BALL_CONFIG,
+  UserLevel,
+  USER_LEVEL_OPTIONS,
+  type CustomUserLevel,
 } from '@/src/modules/shared/types';
-import { getUserLevelOptions } from '@/src/utils';
 import { StorageService } from '@/src/modules/core/storage';
 import { notifySettingsChanged } from '@/src/modules/core/messaging';
 import { languageService } from '@/src/modules/core/translation/LanguageService';
@@ -47,6 +49,10 @@ onMounted(async () => {
   }
   if (!loadedSettings.floatingBall) {
     loadedSettings.floatingBall = { ...DEFAULT_FLOATING_BALL_CONFIG };
+  }
+  // 确保 customUserLevels 字段存在
+  if (!loadedSettings.customUserLevels) {
+    loadedSettings.customUserLevels = [];
   }
 
   // 设置settings.value后标记初始化完成
@@ -237,7 +243,40 @@ const handleActiveConfigChange = async () => {
   }
 };
 
-const levelOptions = getUserLevelOptions();
+const levelOptions = computed(() => {
+  const predefinedOptions = USER_LEVEL_OPTIONS.map(option => ({
+    value: option.value,
+    label: option.label,
+    isCustom: false
+  }));
+  
+  const customOptions = (settings.value.customUserLevels || []).map(level => ({
+    value: level.id,
+    label: level.name + (level.description ? ` (${level.description})` : ''),
+    isCustom: true
+  }));
+  
+  return [...predefinedOptions, ...customOptions];
+});
+
+// 获取当前用户等级的显示标签
+const currentUserLevelLabel = computed(() => {
+  const currentLevel = settings.value.userLevel;
+  
+  // 如果是预定义等级
+  if (typeof currentLevel === 'number') {
+    const option = USER_LEVEL_OPTIONS.find(opt => opt.value === currentLevel);
+    return option ? option.label : '未知';
+  }
+  
+  // 如果是自定义等级
+  if (typeof currentLevel === 'string') {
+    const customLevel = settings.value.customUserLevels?.find(level => level.id === currentLevel);
+    return customLevel ? customLevel.name : currentLevel;
+  }
+  
+  return '未知';
+});
 
 const styleOptions = [
   { value: TranslationStyle.DEFAULT, label: '默认' },
@@ -356,13 +395,26 @@ const openOptionsBasePage = () => {
             <div class="setting-group">
               <label>语言水平</label>
               <select v-model="settings.userLevel">
-                <option
-                  v-for="option in levelOptions"
-                  :key="option.value"
-                  :value="option.value"
-                >
-                  {{ option.label }}
-                </option>
+                <!-- 预定义等级 -->
+                <optgroup label="预定义等级">
+                  <option
+                    v-for="option in levelOptions.filter(opt => !opt.isCustom)"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </optgroup>
+                <!-- 自定义等级 -->
+                <optgroup v-if="levelOptions.some(opt => opt.isCustom)" label="自定义等级">
+                  <option
+                    v-for="option in levelOptions.filter(opt => opt.isCustom)"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </option>
+                </optgroup>
               </select>
             </div>
 

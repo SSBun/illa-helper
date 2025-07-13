@@ -84,10 +84,12 @@ export interface ProcessingStats {
 export interface PromptConfig {
   translationDirection: string;
   targetLanguage: string;
-  userLevel: UserLevel;
+  userLevel: UserLevel | string; // 支持预定义等级或自定义等级ID
   replacementRate: number;
   intelligentMode?: boolean;
   provider?: 'gemini' | string;
+  customLevelAdjustment?: string; // 自定义用户水平调整模板
+  customUserLevels?: Array<{id: string, name: string}>; // 自定义用户等级列表
 }
 
 /**

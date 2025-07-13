@@ -91,6 +91,14 @@ export default defineBackground(() => {
         handleContextMenuAction(message, sendResponse);
         return true; // 保持消息通道开放
 
+      case MESSAGE_TYPES.SETTINGS_UPDATED:
+        handleSettingsUpdated(message);
+        return false;
+
+      case MESSAGE_TYPES.API_CONFIG_UPDATED:
+        handleApiConfigUpdated(message);
+        return false;
+
       default:
         console.warn(`[Background] 未知消息类型: ${message.type}`);
         return false;
@@ -192,6 +200,32 @@ export default defineBackground(() => {
         });
       }
     })();
+  }
+
+  /**
+   * 处理设置更新消息
+   */
+  async function handleSettingsUpdated(message: any): Promise<void> {
+    try {
+      console.log('[Background] 设置已更新');
+      // 这里可以添加设置更新后的处理逻辑
+      // 例如：通知其他组件、更新右键菜单状态等
+    } catch (error) {
+      console.error('[Background] 处理设置更新失败:', error);
+    }
+  }
+
+  /**
+   * 处理API配置更新消息
+   */
+  async function handleApiConfigUpdated(message: any): Promise<void> {
+    try {
+      console.log('[Background] API配置已更新');
+      // 这里可以添加API配置更新后的处理逻辑
+      // 例如：清除API缓存、验证新配置等
+    } catch (error) {
+      console.error('[Background] 处理API配置更新失败:', error);
+    }
   }
 
   /**

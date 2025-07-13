@@ -30,6 +30,7 @@ import AppearanceSettings from './appearance/AppearanceSettings.vue';
 import DataManagement from './data/DataManagement.vue';
 import About from './about/About.vue';
 import HotkeySettings from './basic/HotkeySettings.vue';
+import PromptSettings from './prompt/PromptSettings.vue';
 
 interface Props {
   currentSection: string;
@@ -51,6 +52,7 @@ const componentMap: Record<string, any> = {
   hotkey: HotkeySettings,
   about: About,
   data: DataManagement,
+  prompt: PromptSettings,
 };
 
 const currentComponent = computed(() => {

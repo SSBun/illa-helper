@@ -78,6 +78,7 @@ function createDefaultApiConfigItem(): ApiConfigItem {
 export const DEFAULT_SETTINGS: UserSettings = {
   userLevel: UserLevel.INTERMEDIATE,
   replacementRate: 0.3,
+  customUserLevels: [], // 默认没有自定义等级
   isEnabled: true,
   useGptApi: true,
   apiConfigs: [createDefaultApiConfigItem()],
@@ -96,4 +97,5 @@ export const DEFAULT_SETTINGS: UserSettings = {
   apiRequestTimeout: 0, // 无限制超时
   customTranslationCSS: '',
   lazyLoading: DEFAULT_LAZY_LOADING_CONFIG,
+  customLevelAdjustment: undefined, // 默认使用系统默认模板
 };

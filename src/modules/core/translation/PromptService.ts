@@ -17,6 +17,10 @@ import { languageService } from './LanguageService';
  */
 export class PromptService {
   private static instance: PromptService;
+  
+  // 默认用户水平调整模板
+  public static readonly DEFAULT_LEVEL_ADJUSTMENT_TEMPLATE = 
+    'The user\'s proficiency is at the ${UserLevel} level. Please adjust the difficulty and frequency of the selected words accordingly.';
 
   /**
    * 私有构造函数，防止外部实例化
@@ -64,7 +68,7 @@ export class PromptService {
     const coreRules = this.generateCoreRules(targetLanguage);
 
     // 4. 用户水平调整
-    const levelAdjustment = this.generateLevelAdjustment(userLevel);
+    const levelAdjustment = this.generateLevelAdjustment(userLevel, config.customLevelAdjustment, config.customUserLevels);
 
     // 5. 比例控制（根据provider调整详细程度）
     const ratioControl = this.generateRatioControl(replacementRate, provider);
@@ -142,8 +146,23 @@ export class PromptService {
   /**
    * 生成用户水平调整
    */
-  private generateLevelAdjustment(userLevel: UserLevel): string {
-    return `The user's proficiency is at the ${UserLevel[userLevel]} level. Please adjust the difficulty and frequency of the selected words accordingly.`;
+  private generateLevelAdjustment(userLevel: UserLevel | string, customTemplate?: string, customUserLevels?: Array<{id: string, name: string}>): string {
+    const template = customTemplate || PromptService.DEFAULT_LEVEL_ADJUSTMENT_TEMPLATE;
+    
+    // 获取用户等级显示名称
+    let levelDisplayName: string;
+    if (typeof userLevel === 'number') {
+      // 预定义等级
+      levelDisplayName = UserLevel[userLevel];
+    } else {
+      // 自定义等级
+      const customLevel = customUserLevels?.find(level => level.id === userLevel);
+      console.log('customLevel', customUserLevels);
+      levelDisplayName = customLevel?.name || userLevel;
+    }
+    
+    // 替换模板中的 ${UserLevel} 占位符
+    return template.replace(/\$\{UserLevel\}/g, levelDisplayName);
   }
 
   /**

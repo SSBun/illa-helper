@@ -12,14 +12,17 @@ import type {
   ContextMenuActionType,
   UrlPatternType,
   LazyLoadingConfig,
+  CustomUserLevel,
 } from './core';
 import type { ApiConfigItem, MultilingualConfig } from './api';
 import type { TooltipHotkey, FloatingBallConfig } from './ui';
 
 // 用户设置主接口
 export interface UserSettings {
-  userLevel: UserLevel;
+  userLevel: UserLevel | string; // 支持预定义等级或自定义等级ID
   replacementRate: number;
+  // 新增：自定义用户等级列表
+  customUserLevels: CustomUserLevel[];
   isEnabled: boolean;
   useGptApi: boolean;
   // 修改：支持多API配置
@@ -47,6 +50,8 @@ export interface UserSettings {
   customTranslationCSS: string;
   // 新增：懒加载配置
   lazyLoading: LazyLoadingConfig;
+  // 新增：自定义用户水平调整提示词
+  customLevelAdjustment?: string;
 }
 
 // 右键菜单消息接口

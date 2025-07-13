@@ -102,6 +102,7 @@ import {
   Download,
   Info,
   Keyboard,
+  FileText,
 } from 'lucide-vue-next';
 import NavigationGroup from './NavigationGroup.vue';
 import { ref, onMounted, onUnmounted, watch } from 'vue';
@@ -156,6 +157,12 @@ const advancedFeatures: NavigationItem[] = [
     label: '翻译服务',
     icon: Languages,
     description: 'API配置和翻译策略',
+  },
+  {
+    key: 'prompt',
+    label: '提示词',
+    icon: FileText,
+    description: '自定义翻译提示词',
   },
 ];
 

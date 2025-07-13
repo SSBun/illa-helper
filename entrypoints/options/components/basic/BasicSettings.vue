@@ -167,16 +167,11 @@
           />
         </div>
         <div class="space-y-2">
-          <Label for="user-level">
-            单词熟悉度 ({{ getUserLevelLabel(settings.userLevel) }})
-          </Label>
-          <Slider
-            id="user-level"
-            :model-value="[settings.userLevel]"
-            @update:model-value="settings.userLevel = ($event || [1])[0]"
-            :min="1"
-            :max="5"
-            :step="1"
+          <UserLevelManager
+            :current-level="settings.userLevel"
+            :custom-levels="settings.customUserLevels"
+            @update:current-level="settings.userLevel = $event"
+            @update:custom-levels="settings.customUserLevels = $event"
           />
         </div>
         <div class="space-y-2">
@@ -287,7 +282,7 @@ import {
   TranslationPosition,
   TranslationStyle,
 } from '@/src/modules/shared/types';
-import { getUserLevelLabel } from '@/src/utils';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -302,6 +297,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
+import UserLevelManager from './UserLevelManager.vue';
 
 const settings = ref<UserSettings>(DEFAULT_SETTINGS);
 const storageService = StorageService.getInstance();
@@ -313,6 +309,12 @@ const emit = defineEmits<{
 
 onMounted(async () => {
   settings.value = await storageService.getUserSettings();
+  
+  // 确保 customUserLevels 字段存在
+  if (!settings.value.customUserLevels) {
+    settings.value.customUserLevels = [];
+  }
+  
   styleManager.setTranslationStyle(settings.value.translationStyle);
   // 如果是自定义样式，加载自定义CSS
   if (settings.value.translationStyle === TranslationStyle.CUSTOM) {

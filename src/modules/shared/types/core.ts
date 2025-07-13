@@ -81,3 +81,11 @@ export interface LazyLoadingConfig {
   /** 预加载距离（视口百分比，0.5表示提前半屏） */
   preloadDistance: number;
 }
+
+// 自定义用户等级接口
+export interface CustomUserLevel {
+  id: string;
+  name: string; // 显示名称，如 "CET4", "CET6"
+  description?: string; // 可选描述
+  createdAt: number;
+}
